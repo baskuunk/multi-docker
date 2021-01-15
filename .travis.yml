@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - dcoker build -t kasbuunk/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true kasbuunk/react-test npm test
+
+after_success:
+  - docker build -t kasbuunk/multi-client ./client
+  - docker build -t kasbuunk/multi-nginx ./nginx
+  - docker build -t kasbuunk/multi-server ./server
+  - docker build -t kasbuunk/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push kasbuunk/multi-client
+  - docker push kasbuunk/multi-nginx
+  - docker push kasbuunk/multi-server
+  - docker push kasbuunk/multi-worker
