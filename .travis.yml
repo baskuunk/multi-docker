@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  - dcoker build -t kasbuunk/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t kasbuunk/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true kasbuunk/react-test npm test
